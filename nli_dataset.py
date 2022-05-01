@@ -1,3 +1,4 @@
+import json
 from dataclasses import dataclass
 from typing import List, Optional, Tuple
 
@@ -9,22 +10,17 @@ class DataInstance:
 	hyp1: str
 	hyp2: str
 	label: int
-	
-	@staticmethod
-	def from_json(json_dict: dict) -> 'DataInstance':
-		return DataInstance(
-			story_id=json_dict['story_id'],
-			obs1=json_dict['obs1'],
-			obs2=json_dict['obs2'],
-			hyp1=json_dict['hyp1'],
-			hyp2=json_dict['hyp2'],
-			label=json_dict['label'] # This is actually part of a seperate label file (ugh) so yeah this won't work out of the box just parsing dev.jsonl
-		)
 
 class NLIDataset:
-	pass
 
-	# Or perhaps just make this as the constructor, not like we have many different formats...
-	@staticmethod
-	def from_jsonl(jsonl_file: str) -> 'NLIDataset':
-		pass
+	def __init__(self, data_path: str, labels_path: str):
+		self.data_path = data_path
+		self.labels_path = labels_path
+
+	def __iter__(self):
+		with open(self.data_path, 'r') as data_file:
+			with open(self.labels_path, 'r') as labels_file:
+				for data_str, label_str in zip(data_file, labels_file):
+					data = json.loads(data_str)
+					label = int(label_str)
+					yield DataInstance(id=data['story_id'], obs1=data['obs1'], obs2=data['obs2'], hyp1=data['hyp1'], hyp2=data['hyp2'], label=label)
