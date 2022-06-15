@@ -55,7 +55,7 @@ class SentenceEmbedder:
         self.embedder_path = embedder_path
 
     def fit(self, data):
-        new_model = SentenceTransformer('bert-base-nli-mean-tokens')
+        new_model = SentenceTransformer('distilbert-base-nli-mean-tokens')
 
         train_samples = [InputExample(texts=[instance.obs1, instance.obs2, instance.hyp1, instance.hyp2], label=float(instance.label)) for instance in data]
         train_dataloader = DataLoader(train_samples, batch_size=16, shuffle=True)
@@ -68,19 +68,20 @@ class SentenceEmbedder:
 
     @cached_property
     def embedder(self):
-        return SentenceTransformer(embedder_path)
+        return SentenceTransformer(self.embedder_path)
 
+    # TODO: Decide: Should these be based on sentences or on embeddings? (i.e. do we embed them inside this method or does the user have to do it before)
     def occurs_after(self, sentence1, sentence2):
-        return self.embedder.encode(sentence1) @ self.embedder.encode(sentence2)
+        return np.kron(sentence1, sentence2)
 
     def consistent(self, sentence):
-        return self.embedder.encode(sentence) @ self.embedder.encode(sentence)
+        return sentence @ np.tile([1, -1], len(sentence) // 2) # Can also vary the pattern (i.e. 1 -1 -1 1 or 1 1 -1 -1)
 
     def embed(self, sentence):
         return self.embedder.encode(sentence)
 
 if __name__ == '__main__':
     model = SentenceEmbedClassifier(embedder_path='./data/embeddings')
-    model.fit(train_data)
+    #model.fit(train_data)
 
     print('Approach:', evaluate_model(model, test_data))
