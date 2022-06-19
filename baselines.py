@@ -2,7 +2,7 @@ import abc
 import random
 from embeddings import BoWEmbedding
 from typing import Set
-import tokenizers
+import tokenizer as tokenizers
 
 
 class BaseClassifier(abc.ABC):
