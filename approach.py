@@ -18,8 +18,10 @@ test_data = NLIDataset(TEST_INSTANCES_PATH, TEST_LABEL_PATH)
 # might be a good idea to just have training and evaluation in different files
 # especially since we already have evaluation.py
 parser = argparse.ArgumentParser()
-parser.add_argument('--train', action=argparse.BooleanOptionalAction, default=False) 
-parser.add_argument('--eval', action=argparse.BooleanOptionalAction, default=True)
+parser.add_argument('--train', default=False, action='store_true') 
+parser.add_argument('--no-train', dest='train', action='store_false') 
+parser.add_argument('--eval', default=True, action='store_true') 
+parser.add_argument('--no-eval', dest='eval', action='store_false') 
 parser.add_argument('--model_path', default='./data/embeddings')
 parser.add_argument('--backbone', default='bert-large-uncased')
 parser.add_argument('--device', default='cuda')
