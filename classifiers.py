@@ -99,7 +99,7 @@ class SentenceEmbedClassifier(BaseClassifier):
         return self.embedder.consistent(sentence)
 
     def embed(self, sentence):
-        return self.embedder(sentence)
+        return self.embedder.encode(sentence, convert_to_tensor=True)
 
     def predict(self, instance):
         # Embed the two observations and hypothesis to torch tensors
