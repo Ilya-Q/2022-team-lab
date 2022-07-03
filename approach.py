@@ -4,8 +4,10 @@ from classifiers import SentenceEmbedClassifier
 from nli_dataset import NLIDataset
 from evaluation import evaluate_model
 import argparse
-from models import KroeneckerSentenceEmbedder
-from losses import MSELoss
+from models import KroeneckerSentenceEmbedder, SimpleSentenceEmbedder
+from losses import MSELoss, CELoss
+
+import fire
 
 TRAIN_INSTANCES_PATH = './data/jsonl/train.jsonl'
 TRAIN_LABEL_PATH = './data/jsonl/train-labels.lst'
@@ -27,13 +29,41 @@ parser.add_argument('--backbone', default='bert-large-uncased')
 parser.add_argument('--device', default='cuda')
 # when we come up with more losses and models, these may also be specified as args
 
+class CommandLineInterface:
+
+    def __init__(self,
+        model_path='./data/embeddings',
+        model_type='kronecker',
+        train_data_instances_path=TRAIN_INSTANCES_PATH,
+        train_data_label_path=TRAIN_LABEL_PATH,
+        test_data_instances_path=TEST_INSTANCES_PATH,
+        test_data_label_path=TEST_LABEL_PATH
+    ):
+        self.model_path = model_path
+        self.model_type = model_type
+
+        self.train_data = NLIDataset(train_data_instances_path, train_data_label_path)
+        self.test_data = NLIDataset(test_data_instances_path, test_data_label_path)
+
+    def _create_model(self, *args, **kwargs):
+        if self.model_type == 'kronecker':
+            return KroeneckerSentenceEmbedder(*args, **kwargs)
+        elif self.model_type == 'simple':
+            return SimpleSentenceEmbedder(*args, **kwargs)
+        else:
+            raise RuntimeError(f'Model type "{self.model_type}" not found.')
         
-if __name__ == '__main__':
-    args = parser.parse_args()
-    if args.train:
-        model = KroeneckerSentenceEmbedder(
-            backbone=args.backbone,
-            device=args.device
+
+    def eval(self):
+        model = self._create_model(self.model_path)
+        classifier = SentenceEmbedClassifier(model)
+
+        print('Approach:', evaluate_model(classifier, test_data))
+
+    def train(self, backbone='bert-large-uncased', device='cuda'):
+        model = self._create_model(
+            backbone=backbone,
+            device=device
         )
         train_samples = [InputExample(
             texts=[
@@ -42,23 +72,27 @@ if __name__ == '__main__':
                 instance.hyp1,
                 instance.hyp2
             ],
-            label=float(instance.label)) for instance in train_data
+            label=float(instance.label)) for instance in self.train_data
         ]
         train_dataloader = DataLoader(
             train_samples,
             batch_size=16,
             shuffle=True
         )
-        train_loss = MSELoss(model)
+        train_loss = CELoss(model)
         model.fit(
             train_objectives=[(train_dataloader, train_loss)],
             epochs=1,
             warmup_steps=100
         )
-        model.save(args.model_path)
-    else:
-        model = KroeneckerSentenceEmbedder(args.model_path)
+        model.save(self.model_path)
 
-    if args.eval:
-        classifier = SentenceEmbedClassifier(model)
-        print('Approach:', evaluate_model(classifier, test_data))
+    def __call__(self, train=False, eval=True, **kwargs):
+        if train:
+            self.train(**kwargs)
+
+        if eval:
+            self.eval(**kwargs)
+        
+if __name__ == '__main__':
+    fire.Fire(CommandLineInterface)
