@@ -19,14 +19,6 @@ test_data = NLIDataset(TEST_INSTANCES_PATH, TEST_LABEL_PATH)
 
 # might be a good idea to just have training and evaluation in different files
 # especially since we already have evaluation.py
-parser = argparse.ArgumentParser()
-parser.add_argument('--train', default=False, action='store_true') 
-parser.add_argument('--no-train', dest='train', action='store_false') 
-parser.add_argument('--eval', default=True, action='store_true') 
-parser.add_argument('--no-eval', dest='eval', action='store_false') 
-parser.add_argument('--model_path', default='./data/embeddings')
-parser.add_argument('--backbone', default='bert-large-uncased')
-parser.add_argument('--device', default='cuda')
 # when we come up with more losses and models, these may also be specified as args
 
 class CommandLineInterface:
@@ -53,6 +45,13 @@ class CommandLineInterface:
         else:
             raise RuntimeError(f'Model type "{self.model_type}" not found.')
         
+    def _create_loss(self, loss_type, *args, **kwargs):
+        if loss_type == 'ce':
+            return CELoss(*args, **kwargs)
+        elif loss_type == 'mse':
+            return MSELoss(*args, **kwargs)
+        else:
+            raise RuntimeError(f'Loss type "{loss_type}" not found.')
 
     def eval(self):
         model = self._create_model(self.model_path)
@@ -60,7 +59,7 @@ class CommandLineInterface:
 
         print('Approach:', evaluate_model(classifier, test_data))
 
-    def train(self, backbone='bert-large-uncased', device='cuda'):
+    def train(self, backbone='bert-large-uncased', loss_type='ce', device='cuda'):
         model = self._create_model(
             backbone=backbone,
             device=device
@@ -79,7 +78,7 @@ class CommandLineInterface:
             batch_size=16,
             shuffle=True
         )
-        train_loss = CELoss(model)
+        train_loss = self._create_loss(loss_type, model)
         model.fit(
             train_objectives=[(train_dataloader, train_loss)],
             epochs=1,
