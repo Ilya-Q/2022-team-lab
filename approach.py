@@ -2,7 +2,7 @@ from sentence_transformers import InputExample
 from torch.utils.data import DataLoader
 from classifiers import SentenceEmbedClassifier
 from nli_dataset import NLIDataset
-from evaluation import evaluate_model
+from evaluation import AccuracyEvaluator, SentimentEvaluator, NLIEvaluator
 import argparse
 from models import KroeneckerSentenceEmbedder, SimpleSentenceEmbedder
 from losses import MSELoss, CELoss
@@ -57,7 +57,11 @@ class CommandLineInterface:
         model = self._create_model(self.model_path)
         classifier = SentenceEmbedClassifier(model)
 
-        print('Approach:', evaluate_model(classifier, test_data))
+        #evaluate_model = AccuracyEvaluator(self.test_data)
+        #evaluate_model = SentimentEvaluator()
+        evaluate_model = NLIEvaluator()
+
+        print('Approach:', evaluate_model(classifier))
 
     def train(self, backbone='bert-large-uncased', loss_type='ce', device='cuda'):
         model = self._create_model(
