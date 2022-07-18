@@ -4,7 +4,7 @@ from classifiers import SentenceEmbedClassifier
 from nli_dataset import NLIDataset
 from evaluation import AccuracyEvaluator, SentimentEvaluator, NLIEvaluator
 import argparse
-from models import KroeneckerSentenceEmbedder, SimpleSentenceEmbedder
+from models import KroeneckerSentenceEmbedder, SimpleSentenceEmbedder, MatrixSentenceEmbedder
 from losses import MSELoss, CELoss
 
 import fire
@@ -42,6 +42,8 @@ class CommandLineInterface:
             return KroeneckerSentenceEmbedder(*args, **kwargs)
         elif self.model_type == 'simple':
             return SimpleSentenceEmbedder(*args, **kwargs)
+        elif self.model_type == 'matrix':
+            return MatrixSentenceEmbedder(*args, **kwargs)
         else:
             raise RuntimeError(f'Model type "{self.model_type}" not found.')
         

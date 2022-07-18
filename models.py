@@ -1,7 +1,9 @@
 import abc
 import torch
 import torch.nn as nn
+import torch.nn.functional as F
 from sentence_transformers import SentenceTransformer, models
+from sbert_modules.CNNConsistency import CNNConsistency
 
 class BaseSentenceEmbedder(SentenceTransformer, abc.ABC):
     def __init__(self, *args, **kwargs):
@@ -10,6 +12,12 @@ class BaseSentenceEmbedder(SentenceTransformer, abc.ABC):
             del kwargs["backbone"]
             kwargs["modules"] = self._build_modules_list(models.Transformer(bb_name))
         super().__init__(*args, **kwargs)
+        self._seq_modules = [module for module in self._modules.keys() if module not in self._nonseq_modules]
+
+    def forward(self, input):
+        for module_name in self._seq_modules:
+            input = self._modules[module_name](input)
+        return input
 
     @abc.abstractmethod
     def _build_modules_list(self, backbone):
@@ -52,4 +60,27 @@ class SimpleSentenceEmbedder(BaseSentenceEmbedder):
 
     def consistent(self, sentence):
         return sentence.sum()
+
+class MatrixSentenceEmbedder(BaseSentenceEmbedder):
+    def __init__(self, *args, **kwargs):
+        self._nonseq_modules = {'consistency_cnn'}
+        super().__init__(*args, **kwargs)
+        self.consistency_cnn = CNNConsistency()
+    
+    def _build_modules_list(self, backbone):
+        pooling_model = models.Pooling(backbone.get_word_embedding_dimension())
+        dense_model = models.Dense(in_features=pooling_model.get_sentence_embedding_dimension(), out_features=256, activation_function=nn.Tanh())
+        return [backbone, pooling_model, dense_model]
+
+    def occurs_after(self, sentence1, sentence2):
+        return torch.flatten(
+            torch.matmul(
+                torch.reshape(sentence1, (16,16)),
+                torch.reshape(sentence2, (16,16))
+            )
+        )
+          
+    def consistent(self, sentence):
+        return self.consistency_cnn(sentence)
+
 
