@@ -12,7 +12,10 @@ class BaseSentenceEmbedder(SentenceTransformer, abc.ABC):
             del kwargs["backbone"]
             kwargs["modules"] = self._build_modules_list(models.Transformer(bb_name))
         super().__init__(*args, **kwargs)
-        self._seq_modules = [module for module in self._modules.keys() if module not in self._nonseq_modules]
+        if hasattr(self, '_nonseq_modules'):
+            self._seq_modules = [module for module in self._modules.keys() if module not in self._nonseq_modules]
+        else:
+            self._seq_modules = self._modules.keys()
 
     def forward(self, input):
         for module_name in self._seq_modules:
