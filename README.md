@@ -41,11 +41,11 @@ There are three options for `--model_type` (see the paper for more details):
 
 This is the command to evaulate a trained model:
 ```
-python main.py eval --model_type kronecker --model_path path/to/saved/model
+$ python main.py eval --model_type kronecker --model_path path/to/saved/model
 ```
 
 Note that the `--model_type` must be specified both in evaluation and training.
 
-The `--task` argument allows for evaluation on tasks other than aNLI, and can be either `sentiment`, to evaluate on the SST2 dataset, or `nli`, to evaluate on MNLI. Again, see the paper for more detail.
+The `--task` argument allows for evaluation on tasks other than aNLI, and can be either `sentiment`, to evaluate on the SST2 dataset, or `nli`, to evaluate on MNLI. Again, see the paper for more details.
 
 You can also specify a `--baseline` argument instead of `--model_type` and `--model_path` to compare the results to a `random`, `majority`, or `overlap` baseline.
