@@ -4,9 +4,9 @@
 
 ## Overview
 
-This repository contains the code for the Team Laboratory project done by Patrick Bareiss and Ilya Kuryanov.
+This repository contains the code for the Team Laboratory project done by Patrick Bareiss and Ilya Kuryanov. The task to solve is abductive natural language inference or aNLI, which involves selecting one of two hypotheses that produces the more plausible story when combined into a narrative with the two given observations.
 
-TODO: BRIEF TASK AND APPROACH DESCRIPTION GOES HERE
+The main idea of our approach is to finetune pretrained sentence embeddings (which we call "backbones") so that they can be combined into representations for temporally consequent *chains* of events, which are then associated with a plausibility score. These can then be used for the aNLI task by comparing the scores for the two possible chains, and also may prove useful for any other task where reasoning about cause and effect may be required.
 
 ## Prerequisites
 
@@ -27,7 +27,7 @@ $ pip install -r requirements.txt
 
 The syntax for training models looks as follows:
 ```
-$ python main.py train --loss_type ce --model_type matrix --model_path path/to/saved/model --device cuda --backbone bert-base-uncased --batch_size 16 --epochs 1
+$ python main.py train --loss_type ce --model_type matrix --model_path path/to/saved/model --device cuda --backbone bert-base-uncased --batch_size 16 --epochs 3
 ```
 
 There are three options for `--model_type` (see the paper for more details):
@@ -37,7 +37,7 @@ There are three options for `--model_type` (see the paper for more details):
 
 `--loss_type` can be either `ce` for cross-entropy or `mse` for mean square error.
 
-`--backbone` is the base SBert or HuggingFace model for the base embeddings that will be fine-tuned.
+`--backbone` is the SBert or HuggingFace model for the base embeddings that will be fine-tuned.
 
 This is the command to evaulate a trained model:
 ```
