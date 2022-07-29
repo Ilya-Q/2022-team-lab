@@ -68,7 +68,8 @@ class MatrixSentenceEmbedder(BaseSentenceEmbedder):
     def __init__(self, *args, **kwargs):
         self._nonseq_modules = {'consistency_cnn'}
         super().__init__(*args, **kwargs)
-        self.consistency_cnn = CNNConsistency()
+        if not hasattr(self, 'consistency_cnn'):
+            self.consistency_cnn = CNNConsistency()
     
     def _build_modules_list(self, backbone):
         pooling_model = models.Pooling(backbone.get_word_embedding_dimension())
