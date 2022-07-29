@@ -58,6 +58,8 @@ class CELoss(nn.Module):
                 all_inputs.append(input)
                 all_targets.append(target)
 
+        if len(all_inputs) == 0 or len(all_targets) == 0:
+            return torch.tensor(0., requires_grad=True).cuda()
         input, target = torch.stack(all_inputs), torch.stack(all_targets)
         loss = self.loss(input, target)
 
