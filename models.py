@@ -87,3 +87,7 @@ class MatrixSentenceEmbedder(BaseSentenceEmbedder):
         return self.consistency_cnn(sentence)
 
 
+class MatrixSentenceEmbedderSimpleConsistency(MatrixSentenceEmbedder):
+
+    def consistent(self, sentence):
+        return sentence @ torch.tile(torch.tensor([1., -1.]).to(self._target_device), (len(sentence) // 2,))
