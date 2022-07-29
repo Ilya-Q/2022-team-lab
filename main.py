@@ -4,7 +4,7 @@ from classifiers import SentenceEmbedClassifier, RandomChoiceClassifier, Overlap
 from nli_dataset import NLIDataset
 from evaluation import AccuracyEvaluator, SentimentEvaluator, NLIEvaluator
 import argparse
-from models import KroeneckerSentenceEmbedder, SimpleSentenceEmbedder, MatrixSentenceEmbedder
+from models import KroeneckerSentenceEmbedder, SimpleSentenceEmbedder, MatrixSentenceEmbedder, MatrixSentenceEmbedderSimpleConsistency
 from losses import MSELoss, CELoss
 
 import fire
@@ -44,6 +44,8 @@ class CommandLineInterface:
             return SimpleSentenceEmbedder(*args, **kwargs)
         elif self.model_type == 'matrix':
             return MatrixSentenceEmbedder(*args, **kwargs)
+        elif self.model_type == 'matrix-simple-consistency':
+            return MatrixSentenceEmbedderSimpleConsistency(*args, **kwargs)
         else:
             raise RuntimeError(f'Model type "{self.model_type}" not found.')
         
