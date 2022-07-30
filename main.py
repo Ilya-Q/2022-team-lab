@@ -17,10 +17,6 @@ TEST_LABEL_PATH = './data/jsonl/dev-labels.lst'
 train_data = NLIDataset(TRAIN_INSTANCES_PATH, TRAIN_LABEL_PATH)
 test_data = NLIDataset(TEST_INSTANCES_PATH, TEST_LABEL_PATH)
 
-# might be a good idea to just have training and evaluation in different files
-# especially since we already have evaluation.py
-# when we come up with more losses and models, these may also be specified as args
-
 class CommandLineInterface:
 
     def __init__(self,

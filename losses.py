@@ -25,10 +25,6 @@ class MSELoss(nn.Module):
 
             total_loss += loss
 
-            # Add terms that obs1 -> obs2 should be more consistent than obs2 -> obs1 for example (also with hypotheses)
-
-            # Add terms that obs across things should generally have similar consistency
-
         return total_loss
 
 
