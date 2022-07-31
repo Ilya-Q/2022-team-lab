@@ -51,24 +51,8 @@ class SentimentEvaluator(Evaluator):
 	def __init__(self):
 		self.sst2_test_data = load_dataset('glue', 'sst2')['validation']
 		self.sst2_metric = load_metric('glue', 'sst2')
-		#from sentence_transformers import SentenceTransformer
-		#self.sus = SentenceTransformer('all-MiniLM-L6-v2')
 
 	def _predict_sentiment(self, model, instance):
-		"""
-		from sentence_transformers import util
-		
-		sent_embed = self.sus.encode(instance['sentence'])
-
-		pos_embed = self.sus.encode(self.POS_SENTENCE)
-		neg_embed = self.sus.encode(self.NEG_SENTENCE)
-
-		if util.cos_sim(sent_embed, pos_embed) > 0:
-			return 1
-		else:
-			return 0
-		"""
-
 		embedder = model.embedder
 
 		pos_embed = embedder.occurs_after(
@@ -109,7 +93,6 @@ class NLIEvaluator(Evaluator):
 			embedder.encode(instance['hypothesis'], convert_to_tensor=True)
 		)
 
-		#print(embedder.consistent(entail_embed))
 		if embedder.consistent(entail_embed) > threshold:
 			return 0
 		elif embedder.consistent(entail_embed) < -threshold:

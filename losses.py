@@ -17,11 +17,9 @@ class MSELoss(nn.Module):
             second_score = self.model.consistent(self.model.occurs_after(self.model.occurs_after(obs1, hyp2), obs2))
 
             if label == 1:
-                #loss = second_score - first_score
                 loss = self.loss(torch.stack([first_score, second_score]), torch.tensor([1., -1.]).to(self.model._target_device))
             elif label == 2:
                 loss = self.loss(torch.stack([first_score, second_score]), torch.tensor([-1., 1.]).to(self.model._target_device))
-                #loss = first_score - second_score
 
             total_loss += loss
 
@@ -45,11 +43,9 @@ class CELoss(nn.Module):
             second_score = self.model.consistent(self.model.occurs_after(self.model.occurs_after(obs1, hyp2), obs2))
 
             if label == 1:
-                #loss = second_score - first_score
                 input, target = torch.stack([first_score, second_score]), torch.tensor([1., 0.]).to(self.model._target_device)
             elif label == 2:
                 input, target = torch.stack([first_score, second_score]), torch.tensor([0., 1.]).to(self.model._target_device)
-                #loss = first_score - second_score
 
                 all_inputs.append(input)
                 all_targets.append(target)
