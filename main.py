@@ -9,6 +9,8 @@ from losses import MSELoss, CELoss
 
 import fire
 
+# Author: Patrick Bareiß & Ilya Kuryanov
+
 TRAIN_INSTANCES_PATH = './data/jsonl/train.jsonl'
 TRAIN_LABEL_PATH = './data/jsonl/train-labels.lst'
 TEST_INSTANCES_PATH = './data/jsonl/dev.jsonl'

@@ -4,6 +4,8 @@ from embeddings import BoWEmbedding
 from typing import Set
 import tokenizer as tokenizers
 
+# Author: Ilya Kuryanov & Patrick Bareiß
+
 class BaseClassifier(abc.ABC):
     @abc.abstractmethod
     def fit(self, data):

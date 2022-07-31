@@ -1,6 +1,7 @@
 import torch
 import torch.nn as nn
 
+# Author: Ilya Kuryanov & Patrick Bareiß
 class MSELoss(nn.Module):
     def __init__(self, model):
         super().__init__()

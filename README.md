@@ -30,10 +30,11 @@ The syntax for training models looks as follows:
 $ python main.py train --loss_type ce --model_type matrix --model_path path/to/saved/model --device cuda --backbone bert-base-uncased --batch_size 16 --epochs 3
 ```
 
-There are three options for `--model_type` (see the paper for more details):
+There are four options for `--model_type` (see the paper for more details):
 - `simple` is the baseline commutative model that uses vector summation as the combination operator and elementwise summation for consistency checking
 - `kronecker` uses the Kronecker product as the combination operator and alternating summation for consistency checking
 - `matrix` uses matrix multiplication as the combination operator and a 2-dimensional CNN for consistency checking
+- `matrix-simple-consistency` uses matrix multiplication as the combination operator and alternating summation for consistency checking
 
 `--loss_type` can be either `ce` for cross-entropy or `mse` for mean square error.
 
@@ -49,3 +50,11 @@ Note that the `--model_type` must be specified both in evaluation and training.
 The `--task` argument allows for evaluation on tasks other than aNLI, and can be either `sentiment`, to evaluate on the SST2 dataset, or `nli`, to evaluate on MNLI. Again, see the paper for more details.
 
 You can also specify a `--baseline` argument instead of `--model_type` and `--model_path` to compare the results to a `random`, `majority`, or `overlap` baseline.
+
+### Replication
+The models we trained for our evaluation can all be found in this release [here](https://github.com/Ilya-Q/2022-team-lab/releases/tag/v1).
+
+### Contact
+Feel free to contact us at:
+- Patrick Bareiß (patrick01999@gmail.com)
+- Ilya Kuryanov (st180543@stud.uni-stuttgart.de)

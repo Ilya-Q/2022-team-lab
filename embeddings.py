@@ -1,3 +1,5 @@
+
+# Author: Patrick Bareiß
 class BoWEmbedding:
 	def __init__(self, text):
 		self.text = text

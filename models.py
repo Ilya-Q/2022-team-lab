@@ -5,6 +5,8 @@ import torch.nn.functional as F
 from sentence_transformers import SentenceTransformer, models
 from sbert_modules.CNNConsistency import CNNConsistency
 
+# Author: Ilya Kuryanov & Patrick Bareiß
+
 class BaseSentenceEmbedder(SentenceTransformer, abc.ABC):
     def __init__(self, *args, **kwargs):
         if "backbone" in kwargs:

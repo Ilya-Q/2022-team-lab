@@ -2,6 +2,8 @@ import json
 from dataclasses import dataclass
 from typing import List, Optional, Tuple
 
+# Author: Patrick Bareiß
+
 @dataclass(frozen=True)
 class DataInstance:
 	id: str

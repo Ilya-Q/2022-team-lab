@@ -2,6 +2,7 @@ from tqdm import tqdm
 from datasets import load_dataset, load_metric
 from abc import ABC, abstractmethod
 
+# Author: Patrick Bareiß
 class Evaluator(ABC):
 
 	def __init__(self):
