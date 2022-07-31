@@ -73,7 +73,7 @@ class SentimentEvaluator(Evaluator):
 
 		pos_embed = embedder.occurs_after(
 			embedder.encode(instance['sentence'], convert_to_tensor=True),
-			-embedder.encode(self.NEG_SENTENCE, convert_to_tensor=True)
+			embedder.encode(self.POS_SENTENCE, convert_to_tensor=True)
 		)
 
 		neg_embed = embedder.occurs_after(
